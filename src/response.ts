@@ -10,9 +10,9 @@ export type BodyType =
   ((writeable: Writable) => void);
 
 /**
- * Абстрактный класс для определения основной функциональности ответа в разных средах исполнения
+ * Класс для определения основной функциональности ответа в разных средах исполнения
  */
-export abstract class Response<T = BodyType> {
+export class Response<T = BodyType> {
     status: number;
     headers: HeadersInterface;
     body!: T;

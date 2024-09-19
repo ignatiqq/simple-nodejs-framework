@@ -1,3 +1,4 @@
+import { WebSocket } from "ws";
 import { Request } from "./request";
 import { Response } from "./response";
 
@@ -12,6 +13,7 @@ import { Response } from "./response";
 export class Context {
     request: Request;
     response: Response;
+    webSocket?: WebSocket;
 
     constructor(req: Request, res: Response) {
         this.request = req;

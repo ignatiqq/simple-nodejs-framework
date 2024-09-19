@@ -2,9 +2,9 @@ import { Headers } from "./headers";
 import url from 'node:url';
 
 /**
- * Абстрактный класс для определения основной функциональности запроса в разных средах исполнения
+ * Класс для определения основной функциональности запроса в разных средах исполнения
  */
-export abstract class Request<T = unknown> {
+export class Request<T = unknown> {
     method: string;
     requestUrlTarget: string;
     headers: Headers;
