@@ -1,7 +1,10 @@
-import { HeadersInterface } from "../headers";
+import { HeadersInterface, HeadersObject } from "../headers";
 import { NodeHttpResponse } from "./callback";
 import {NodeHeaders} from "./nodeHeaders";
 import { Response } from "../response";
+import { isHTTP2Response } from "./utils";
+import { promisify } from 'node:util';
+import * as http from 'node:http';
 
 export class NodeResponse<T> implements Response<T> {
     private bodyValue!: T | null;
@@ -54,6 +57,35 @@ export class NodeResponse<T> implements Response<T> {
 
     redirect(address: string): void {
         this.status = 303;
-        this.headers.set('Locatio', address);
+        this.headers.set('Location', address);
+    }
+
+    async sendInformational(status: 101 | 102 | 103, headers: HeadersObject = {}) {
+
+        if(isHTTP2Response(this.inner)) {
+            this.inner.stream.additionalHeaders({
+                ':status': status,
+                ...headers
+            })
+        } else {
+
+            const rawHeaders = [];
+            
+            for (const headerName of Object.keys(headers)) {
+                const headerValue = headers[headerName];
+
+                if(Array.isArray(headerValue)) {
+                    for (const headerVal of headerValue) {
+                        rawHeaders.push(`${headerName}: ${headerVal}\r\n`);
+                    }
+                } else {
+                    rawHeaders.push(`${headerName}: ${headerValue}\r\n`);
+                }
+            }
+
+            // @ts-ignore
+            const writeRaw = promisify(this.inner._writeRaw.bind(this.inner));
+            await writeRaw(`HTTP/1.1 ${status} ${http.STATUS_CODES[status]}\r\n${rawHeaders.join('')}\r\n`, 'ascii');
+        }
     }
 }

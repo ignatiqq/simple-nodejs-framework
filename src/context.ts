@@ -14,9 +14,16 @@ export class Context {
     request: Request;
     response: Response;
     webSocket?: WebSocket;
+    // Transfer information between middlewares and all other places using only state
+    // no need to join all your data to request object
+    state: {
+        [s: string]: any;
+    };
 
     constructor(req: Request, res: Response) {
         this.request = req;
         this.response = res;
+        this.state = {};
     }
+
 }
