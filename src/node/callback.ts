@@ -11,7 +11,6 @@ export type NodeHttpRequest = http.IncomingMessage | http2.Http2ServerRequest;
 export type NodeHttpResponse = http.ServerResponse | http2.Http2ServerResponse;
 
 export function httpServerCallback(app: Application) {
-    
     return async function(req: NodeHttpRequest, res: NodeHttpResponse) {
         try {
             const context = new Context(
@@ -28,7 +27,6 @@ export function httpServerCallback(app: Application) {
             // when listening like .listen().on('error', cb))
             if(app.listenerCount('error')) app.emit('error');
         }
- 
     }
 }
 

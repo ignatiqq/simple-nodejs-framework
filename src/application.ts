@@ -34,7 +34,6 @@ export class Application extends BaseApplication {
                 );
 
                 context.webSocket = ws;
-
                 await this.handle(context);
             });
         }

@@ -6,15 +6,15 @@ type HttpMethodsAssignerFunc = (...mws: MiddlewareFunction[]) => HttpMethodsAssi
 type Methods = 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put';
 type HttpMethodsAssigner = Record<Methods, HttpMethodsAssignerFunc> & MiddlewareFunction;
 
-export function route(path: string, callback?: MiddlewareFunction) {
+export function route(path: string, callback?: MiddlewareFunction[] | MiddlewareFunction): MiddlewareFunction {
     if(callback) {
-        return createSingleRoute(path, callback);
+        return createSingleRoute(path, Array.isArray(callback) ? callback : [callback]);
     }
     return createManyRoutes(path);
 }
 
 // app.use(route('/test').get((ctx, next) => {...}))
-function createManyRoutes(path: string) {
+function createManyRoutes(path: string): MiddlewareFunction {
     const pathRegex = match(path);
 
     const realizedMethods: {[method: string]: MiddlewareFunction[]} = {};
@@ -43,13 +43,15 @@ function createManyRoutes(path: string) {
         }
     }
     
+    return httpMethodsAssigner;
 }
 
 // app.use(route('/test', (ctx, next) => {...}))
-function createSingleRoute(path: string, ...middleware: MiddlewareFunction[]): MiddlewareFunction {
+function createSingleRoute(path: string, middleware: MiddlewareFunction[]): MiddlewareFunction {
     const pathRegex = match(path);
 
     return async (ctx, next) => {
+        console.log({path, match: pathRegex(ctx.request.path), pathRegex})
         if(!pathRegex(ctx.request.path)) return next();
 
         // @ts-ignore

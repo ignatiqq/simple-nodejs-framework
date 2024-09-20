@@ -35,5 +35,7 @@ export class Response<T = BodyType> {
         this.headers.set('content-type', value);
     }
 
+    end(body?: string): void {}
+
     redirect(address: string): void {}
 }

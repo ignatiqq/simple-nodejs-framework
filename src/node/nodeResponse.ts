@@ -55,6 +55,11 @@ export class NodeResponse<T> implements Response<T> {
         return this.bodyValue;
     }
 
+    end(body?: string) {
+        if(body) return this.inner.end(body);
+        this.inner.end();
+    }
+
     redirect(address: string): void {
         this.status = 303;
         this.headers.set('Location', address);
