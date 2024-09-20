@@ -4,13 +4,13 @@ import { Context } from "./context";
 /**
  * Функция миддлвар
  */
-type MiddlewareFunction = (
+export type MiddlewareFunction = (
     // Каждый миддлвар должен получать аргументом контекст определенного запроса
     ctx: Context,
     next: () => Promise<void>
   ) => Promise<void> | void;
 
-async function invokeMiddlewares(ctx: Context, mws: MiddlewareFunction[]) {
+export async function invokeMiddlewares(ctx: Context, mws: MiddlewareFunction[]) {
   if(!mws.length) return;
 
   const middleware = mws[0];
